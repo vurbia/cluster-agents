@@ -1,28 +1,48 @@
-These are the additional OCF startup scripts for cluster-agents-1.0.3 package in backports of Debian 5.0 ( Lenny )
+These are the additional OCF startup scripts.
 
-Just put them into /usr/lib/ocf/resource.d/heartbeat folder
+Just put them or what you need to use into /usr/lib/ocf/resource.d/heartbeat folder
 
-## HAProxy:
-###  Simple HAProxy config
-	crm configure primitive haproxy ocf:heartbeat:haproxy params conffile=/etc/haproxy/haproxy.cfg op monitor interval=1min
+haproxy resource:
+-----------------
 
-### HAProxy with extra parameters
-	crm configure primitive haproxy ocf:heartbeat:haproxy params conffile=/etc/haproxy/haproxy.cfg extraconf="-f /etc/haproxy/shared.cfg" op monitor interval=1min
+  Description:
 
-## Generic Daemon
-### Makes it easier to use the same OCF script to start multiple non-OCF aware daemons
+  Manages haproxy daemon as an OCF resource in an High Availability setup.
 
-#### Managing two different services
-This will start/stop /etc/init.d/service1 ( and monitor pidfile in /var/run/service1.pid ) and /etc/init.d/service2
-( and monitor pidfile in /var/run/service2.pid ) 
+  Usage:
 
-	crm configure primitive custom-service1 ocf:heartbeat:generic-daemon params name=service1 op monitor interval="30s"
-	crm configure primitive custom-service2 ocf:heartbeat:generic-daemon params name=service2 op monitor interval="30s"
+  crm configure primitive haproxy ocf:heartbeat:haproxy params param1="value1" param2="value2" ... paramX="valueX" op monitor interval=1min
 
+  Parameters:
 
-#### Managing services with custom pidfiles and init scripts
-If you have a process "httpd" with init file /etc/init.d/apache2 and pidfile in /var/run/httpd/apache.pid, you can do:
+  - binpath
+  Description: The HAProxy binary path. For example, "/usr/sbin/haproxy"
+  Default value: /usr/sbin/haproxy
 
-	crm configure primitive custom-apache ocf:heartbeat:generic-daemon params name=httpd initd="/etc/init.d/apache2" \
-		pidfile="/var/run/httpd/apache.pid"  op monitor interval="30s"
+  - conffile
+  Description: The HAProxy daemon configuration file name with full path. For example, "/etc/haproxy/haproxy.cfg"
+  Default value: /etc/haproxy/haproxy.cfg
 
+  - pidfile
+  Description: The HAProxy daemon pid file with full path. For example, "/var/run/haproxy.pid"
+  Default value: /var/run/haproxy.pid"
+
+  - statusurl
+  Description: The HAProxy status URL to monitor.i
+  Notes: You need add a listen like this to the configuration file:
+   
+     listen health_check 127.0.0.1:6000
+       mode health
+
+   Also you need to check if this listen works correctly:
+   #  wget -O- -q -L --no-proxy --bind-address=127.0.0.1 http://127.0.0.1:60000 (It should return: OK)
+
+  Examples:
+
+  crm configure primitive haproxy ocf:heartbeat:haproxy params conffile=/etc/haproxy.cfg op monitor interval=1min
+
+  crm configure primitive haproxy ocf:heartbeat:haproxy params binpath="/usr/local/sbin/haproxy" conffile=/etc/haproxy/haproxy.cfg op monitor interval=1min
+
+  crm configure primitive haproxy ocf:heartbeat:haproxy params pidfile=/var/run/ha/haproxy.pid op monitor interval=5min
+
+  crm configure primitive haproxy ocf:heartbeat:haproxy params statusurl="http://127.0.0.1:60000" op monitor interval=3seg
