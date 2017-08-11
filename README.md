@@ -21,19 +21,21 @@ crm configure primitive haproxy ocf:heartbeat:haproxy params param1="value1" par
 | --- | --- | --- |
 | binpath | The HAProxy binary path. For example, "/usr/sbin/haproxy" | /usr/sbin/haproxy |
 | conffile | The HAProxy daemon configuration file name with full path. For example, "/etc/haproxy/haproxy.cfg" | /etc/haproxy/haproxy.cfg |
-| pidfile | The HAProxy daemon pid file with full path. For example, "/var/run/haproxy.pid" | /var/run/haproxy.pid" |
+| pidfile | The HAProxy daemon pid file with full path. For example, "/var/run/haproxy.pid" | /var/run/haproxy.pid |
 | statusurl | The HAProxy status URL to monitor. | |
 
 ### Notes
 
 You need add a listen like this to the configuration file:
 ```
-  listen health_check 127.0.0.1:6000
-    mode health
+listen health_check 127.0.0.1:6000
+  mode health
 ```
 
 Also you need to check if this listen works correctly (It should return: OK):
-`#  wget -O- -q -L --no-proxy --bind-address=127.0.0.1 http://127.0.0.1:6000`
+```
+#  wget -O- -q -L --no-proxy --bind-address=127.0.0.1 http://127.0.0.1:6000
+```
 
 ### Examples
 
