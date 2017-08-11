@@ -21,7 +21,8 @@ crm configure primitive haproxy ocf:heartbeat:haproxy params param1="value1" par
 | --- | --- | --- |
 | binpath | The HAProxy binary path. For example, "/usr/sbin/haproxy" | /usr/sbin/haproxy |
 | conffile | The HAProxy daemon configuration file name with full path. For example, "/etc/haproxy/haproxy.cfg" | /etc/haproxy/haproxy.cfg |
-| pidfile | The HAProxy daemon pid file with full path. For example, "/var/run/haproxy.pid" | /var/run/haproxy.pid |
+| extraconf | Extra command line arguments to pass to haproxy. For example, "-f /etc/haproxy/shared.cfg" | |
+| pidfile | The HAProxy daemon pid file with full path. For example, "/var/run/haproxy.pid" | /var/run/{ocf_instance_name}.pid |
 | statusurl | The HAProxy status URL to monitor. | |
 
 ### Notes

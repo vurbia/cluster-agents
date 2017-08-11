@@ -78,6 +78,24 @@ function meta_data() {
       <content type="string" default="" />
     </parameter>
 
+    <parameter name="pidfile">
+      <longdesc lang="en">
+        The HAProxy daemon pid file with full path.
+        For example, "/var/run/haproxy.pid"
+      </longdesc>
+      <shortdesc lang="en">The HAProxy daemon pid file with full path</shortdesc>
+      <content type="string" default="/var/run/haproxy.pid" />
+    </parameter>
+
+    <parameter name="statusurl">
+      <longdesc lang="en">
+        The HAProxy status URL to monitor.
+        This is not implemented yet.
+      </longdesc>
+      <shortdesc lang="en">The HAProxy status URL to monitor</shortdesc>
+      <content type="string" default="" />
+    </parameter>
+
   </parameters>
 
   <actions>
