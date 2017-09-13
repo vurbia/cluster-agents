@@ -101,6 +101,7 @@ meta_data() {
   <actions>
     <action name="start" timeout="20s"/>
     <action name="stop" timeout="20s"/>
+    <action name="reload" timeout="40s"/>
     <action name="monitor" depth="0" timeout="20s" interval="60s" />
     <action name="validate-all" timeout="20s"/>
     <action name="meta-data"  timeout="5s"/>
@@ -157,7 +158,7 @@ haproxy_start() {
   COMMAND="${OCF_RESKEY_binpath-/usr/sbin/haproxy}"
 
   # shellcheck disable=SC2086
-  if ! $COMMAND ${OCF_RESKEY_extraconf-} -f "${CONF_FILE}" -p "${PIDFILE}"; then
+  if ! $COMMAND ${OCF_RESKEY_extraconf-} -f ${CONF_FILE} -p ${PIDFILE}; then
     ocf_log err "Error. haproxy daemon returned error $?."
     exit "${OCF_ERR_GENERIC}"
   fi
@@ -179,6 +180,26 @@ haproxy_stop() {
     fi
   fi
   ocf_log info "Stopped haproxy daemon."
+  exit "${OCF_SUCCESS}"
+}
+
+haproxy_reload() {
+  # if haproxy is not running return error
+  if ! haproxy_status; then
+    ocf_log err "Error. haproxy daemon is not running."
+    exit "${OCF_ERR_GENERIC}"
+  fi
+
+  COMMAND="${OCF_RESKEY_binpath-/usr/sbin/haproxy}"
+  PID=$(cat "${PIDFILE}")
+
+  # shellcheck disable=SC2086
+  if ! $COMMAND ${OCF_RESKEY_extraconf-} -f ${CONF_FILE} -p ${PIDFILE} -sf ${PID}; then
+    ocf_log err "Error. haproxy daemon returned error $?."
+    exit "${OCF_ERR_GENERIC}"
+  fi
+
+  ocf_log info "Reloaded haproxy daemon."
   exit "${OCF_SUCCESS}"
 }
 
@@ -222,6 +243,10 @@ case $1 in
   'stop')
     get_pid_and_conf_file
     haproxy_stop
+    ;;
+  'reload')
+    get_pid_and_conf_file
+    haproxy_reload
     ;;
   'status')
     get_pid_and_conf_file
