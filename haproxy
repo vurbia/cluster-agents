@@ -60,7 +60,7 @@ meta_data() {
       <content type="string" default="/usr/sbin/haproxy"/>
     </parameter>
 
-    <parameter name="conffile">
+    <parameter name="conffile" unique="0">
       <longdesc lang="en">
         The haproxy daemon configuration file name with full path.
         For example, "/etc/haproxy/haproxy.cfg"
@@ -126,7 +126,7 @@ haproxy_status() {
     PID=$(cat "${PIDFILE}")
     if [[ -n $PID ]]; then
       # shellcheck disable=SC2009
-      if ps -fp "${PID}" | grep haproxy | grep "${CONF_FILE}" >/dev/null ; then
+      if ps -fp "${PID}" | grep haproxy | grep "${PIDFILE}" >/dev/null ; then
         ocf_log info "haproxy daemon running"
         return "${OCF_SUCCESS}"
       else
